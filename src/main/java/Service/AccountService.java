@@ -23,13 +23,13 @@ public class AccountService {
     }
 
     /**
-     * Use the AccountDAO to add a new account to the database, given an Account object with a unique username and a password with 4 or more characters.
+     * Use the AccountDAO to add a new account to the database, given an Account object with a unique non-empty username and a password with 4 or more characters.
      *
      * @param account an object representing a new account.
      * @return Account the newly added account if the insert operation was successful, including the account_id.
      */
     public Account addAccount(Account account) {
-        if (account.getPassword().length() < 4 || accountDAO.getAccount(account.getUsername()) != null) {
+        if (account.getPassword().length() < 4 || account.getUsername().length() == 0 || accountDAO.getAccount(account.getUsername()) != null) {
             return null;
         }
         return accountDAO.insertAccount(account);
@@ -43,5 +43,15 @@ public class AccountService {
      */
     public Account verifyAccount(Account account) {
         return accountDAO.getAccount(account.getUsername(), account.getPassword());
+    }
+
+    /**
+     * Use the AccountDAO to check that an account with the given account_id exists in the database (used by MessageService before attempting to insert a new message).
+     *
+     * @param account_id an int representing an account_id to check.
+     * @return boolean true if account exists, otherwise false.
+     */
+    public boolean checkAccount(int account_id) {
+        return accountDAO.getAccount(account_id) != null;
     }
 }

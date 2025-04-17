@@ -1,5 +1,6 @@
 package Controller;
 
+import java.util.List;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +12,7 @@ import Service.AccountService;
 import Service.MessageService;
 
 /**
- * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
+ * You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
@@ -37,6 +38,8 @@ public class SocialMediaController {
         app.get("example-endpoint", this::exampleHandler);
         app.post("register", this::registerHandler);
         app.post("login", this::loginHandler);
+        app.post("messages", this::messageCreationHandler);
+        app.get("messages", this::getAllMessagesHandler);
         return app;
     }
 
@@ -82,5 +85,32 @@ public class SocialMediaController {
         } else {
             context.json(verifiedAccount).status(200);
         }
+    }
+
+    /**
+     * Handler to post a new message.
+     * The Jackson ObjectMapper will automatically convert the JSON body of the POST request into an Message object.
+     * If messageService returns a null value, the API will return status code 400 (client error).
+     * @param context the Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
+     */
+    private void messageCreationHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(context.body(), Message.class);
+        Message addedMessage = messageService.addMessage(message);
+        if (addedMessage == null) {
+            context.status(400);
+        } else {
+            context.json(addedMessage).status(200);
+        }
+    }
+
+    /**
+     * Handler to retrieve all messages.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     */
+    private void getAllMessagesHandler(Context context) {
+        List<Message> messages = messageService.getAllMessages();
+        context.json(messages).status(200);
     }
 }

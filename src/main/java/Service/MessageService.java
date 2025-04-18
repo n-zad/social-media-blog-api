@@ -27,10 +27,30 @@ public class MessageService {
     /**
      * Use the MessageDAO to retrieve every message in the database.
      *
-     * @return ArrayList<Message> a list of the retrieved messages.
+     * @return List<Message> a list of the retrieved messages.
      */
     public List<Message> getAllMessages() {
         List<Message> messages = messageDAO.getAllMessages();
+        return messages;
+    }
+
+    /**
+     * Use the MessageDAO to retrieve a single message in the database by it's message_id.
+     *
+     * @return Message the retrieved message as a Message object.
+     */
+    public Message getMessageById(int message_id) {
+        Message message = messageDAO.getMessageById(message_id);
+        return message;
+    }
+
+    /**
+     * Use the MessageDAO to retrieve all messages in the database posted by the given account_id.
+     *
+     * @return List<Message> a list of the retrieved messages.
+     */
+    public List<Message> getAllMessagesPostedBy(int account_id) {
+        List<Message> messages = messageDAO.getAllMessagesPostedBy(account_id);
         return messages;
     }
 
@@ -46,5 +66,29 @@ public class MessageService {
             return null;
         }
         return messageDAO.insertMessage(message);
+    }
+
+    /**
+     * Use the MessageDAO to update the message_text of a single message in the database by it's message_id.
+     * The message_text must be non-empty and less than 256 characters, and a record with the given message_id must exist.
+     *
+     * @return Message the updated record as a Message object.
+     */
+    public Message updateMessageById(int message_id, String message_text) {
+        if (message_text.length() == 0 || message_text.length() > 255 || getMessageById(message_id) == null) {
+            return null;
+        }
+        Message message = messageDAO.updateMessageById(message_id, message_text);
+        return message;
+    }
+
+    /**
+     * Use the MessageDAO to delete a single message in the database by it's message_id.
+     *
+     * @return Message the deleted record as a Message object.
+     */
+    public Message deleteMessageById(int message_id) {
+        Message message = messageDAO.deleteMessageById(message_id);
+        return message;
     }
 }

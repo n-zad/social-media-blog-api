@@ -1,6 +1,9 @@
 package Service;
 
+import java.util.List;
+
 import Model.Account;
+import Model.Message;
 import DAO.AccountDAO;
 
 public class AccountService {
@@ -53,5 +56,16 @@ public class AccountService {
      */
     public boolean checkAccount(int account_id) {
         return accountDAO.getAccount(account_id) != null;
+    }
+
+    /**
+     * Use MessageService to get a list of every message from the specified account.
+     *
+     * @param account_id the id of the account to lookup.
+     * @return List<Message> the list of messages with posted_by equal to the specified account_id.
+     */
+    public List<Message> getAllMessagesFromAccount(int account_id) {
+        MessageService messageService = new MessageService();
+        return messageService.getAllMessagesPostedBy(account_id);
     }
 }
